@@ -3,7 +3,7 @@ module Tabulous
   def self.setup
     yield self
   end
-  
+
   def self.tabs(&block)
     @@tabs_block = block
   end
@@ -48,7 +48,7 @@ module Tabulous
     html << (@@html5 ? '</nav>' : '</div>')
     view.raw(html)
   end
-  
+
   def self.render_subtabs(view)
     if @@bootstrap_style_subtabs
       raise TabulousError,
@@ -58,7 +58,7 @@ module Tabulous
     end
     initialize_tabs(view)
     return if !tab_defined?(view) && @@when_action_has_no_tab == :do_not_render
-    controller = view.controller_name.to_sym
+    controller = view.controller_path.to_sym
     action = view.action_name.to_sym
     tab = active_tab(view)
     html = ''
@@ -163,7 +163,7 @@ module Tabulous
       @@tabs << tab
     end
   end
-  
+
   def self.actions=(ary)
     @@actions = {}
     ary.each do |a|
@@ -180,13 +180,13 @@ module Tabulous
       @@actions[controller][action] << tab
     end
   end
-  
+
   def self.main_tabs
     @@tabs.select { |t| !t.subtab? }
   end
-  
+
   def self.active_tab(view)
-    controller = view.controller_name.to_sym
+    controller = view.controller_path.to_sym
     action = view.action_name.to_sym
     for tab in @@tabs
       if active?(controller, action, tab.name)
@@ -207,7 +207,7 @@ module Tabulous
   end
 
   def self.tab_defined?(view)
-    controller = view.controller_name.to_sym
+    controller = view.controller_path.to_sym
     action = view.action_name.to_sym
     if @@actions[controller].nil?
       if @@when_action_has_no_tab == :raise_error
